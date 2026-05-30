@@ -2,8 +2,9 @@ import SwiftUI
 
 @main
 struct CapiLiftApp: App {
-    @State private var authState = AuthState()
-    @State private var router    = AppRouter()
+    @State private var authState    = AuthState()
+    @State private var router       = AppRouter()
+    @State private var tabSelection = TabSelection()
 
     var body: some Scene {
         WindowGroup {
@@ -18,6 +19,7 @@ struct CapiLiftApp: App {
             }
             .environment(authState)
             .environment(router)
+            .environment(tabSelection)
         }
     }
 }

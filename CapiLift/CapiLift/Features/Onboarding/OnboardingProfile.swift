@@ -14,6 +14,8 @@ struct OnboardingProfile {
     var homeAddress: String = ""
     var homeLat: Double = -34.0833
     var homeLng: Double = 18.8476
+    var pickupSameAsHome: Bool = true
+    var driverNotes: String = ""
     var campus: User.Campus? = nil
     var role: ScheduleDay.DayRole? = nil
     // Car details

@@ -1,101 +1,104 @@
-//
-//  HomeWeekStripView.swift
-//  CapiLift
-//
-//  Created by Candice Yeatman on 2026/05/27.
-//
-
-
 import SwiftUI
 
 struct HomeWeekStripView: View {
-    // Mock data — will come from API later
     @State private var days: [WeekDay] = WeekDay.mockWeek()
 
     var body: some View {
         VStack(alignment: .leading, spacing: LCSpacing.sm) {
-            Text("WEEKLY SCHEDULE")
-                .font(.lcCaptionBold)
+            Text("WEEKLY ACTIVITY")
+                .font(.system(size: 11, weight: .semibold))
                 .foregroundStyle(Color.lcMuted)
+                .tracking(0.8)
                 .padding(.horizontal, LCSpacing.md)
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: LCSpacing.sm) {
-                    ForEach(days) { day in
-                        WeekDayChip(day: day)
-                    }
+            HStack(spacing: 0) {
+                ForEach(days) { day in
+                    WeekDayCell(day: day)
+                        .frame(maxWidth: .infinity)
                 }
-                .padding(.horizontal, LCSpacing.md)
             }
+            .padding(.horizontal, LCSpacing.md)
+            .padding(.vertical, LCSpacing.md)
+            .background(Color.lcCard)
+            .clipShape(RoundedRectangle(cornerRadius: LCRadius.xl))
+            .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
+            .padding(.horizontal, LCSpacing.md)
         }
     }
 }
 
 struct WeekDay: Identifiable {
     let id = UUID()
-    let name: String
     let shortName: String
-    var isGoing: Bool
-    var coverage: CoverageLevel
+    var status: DayStatus
 
-    enum CoverageLevel {
-        case high, low, none
-
-        var label: String {
-            switch self {
-            case .high: return "HIGH\nCOVERAGE"
-            case .low:  return "LOW\nCOVERAGE"
-            case .none: return ""
-            }
-        }
-
-        var color: Color {
-            switch self {
-            case .high: return .lcGreen
-            case .low:  return .lcMuted
-            case .none: return .clear
-            }
-        }
+    enum DayStatus {
+        case completed       // ticked — past ride done
+        case today           // car icon, highlighted
+        case upcoming        // grey circle
+        case off             // not going
     }
 
     static func mockWeek() -> [WeekDay] {
         [
-            WeekDay(name: "Monday",    shortName: "Mon", isGoing: true,  coverage: .high),
-            WeekDay(name: "Tuesday",   shortName: "Tue", isGoing: false, coverage: .low),
-            WeekDay(name: "Wednesday", shortName: "Wed", isGoing: true,  coverage: .high),
-            WeekDay(name: "Thursday",  shortName: "Thu", isGoing: false, coverage: .low),
-            WeekDay(name: "Friday",    shortName: "Fri", isGoing: false, coverage: .high),
+            WeekDay(shortName: "MON", status: .completed),
+            WeekDay(shortName: "TUE", status: .completed),
+            WeekDay(shortName: "WED", status: .completed),
+            WeekDay(shortName: "THU", status: .today),
+            WeekDay(shortName: "FRI", status: .upcoming),
+            WeekDay(shortName: "SAT", status: .off),
         ]
     }
 }
 
-private struct WeekDayChip: View {
+private struct WeekDayCell: View {
     let day: WeekDay
+
+    private var isToday: Bool { day.status == .today }
 
     var body: some View {
         VStack(spacing: LCSpacing.xs) {
             Text(day.shortName)
-                .font(.lcBodyBold)
-                .foregroundStyle(day.isGoing ? .white : Color.lcText)
-                .frame(width: 64, height: 64)
-                .background(day.isGoing ? Color.lcGreen : Color.lcCard)
-                .clipShape(RoundedRectangle(cornerRadius: LCRadius.md))
-                .overlay {
-                    RoundedRectangle(cornerRadius: LCRadius.md)
-                        .stroke(day.isGoing ? Color.clear : Color.lcBorder, lineWidth: 1)
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundStyle(isToday ? Color.lcGreen : Color.lcMuted)
+                .tracking(0.5)
+
+            ZStack {
+                Circle()
+                    .fill(circleBackground)
+                    .frame(width: 40, height: 40)
+                    .overlay {
+                        if day.status == .today {
+                            Circle().stroke(Color.lcGreen, lineWidth: 2)
+                        }
+                    }
+
+                switch day.status {
+                case .completed:
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(.white)
+                case .today:
+                    Image(systemName: "car.fill")
+                        .font(.system(size: 14))
+                        .foregroundStyle(Color.lcGreen)
+                case .upcoming:
+                    Circle()
+                        .fill(Color.lcMuted.opacity(0.3))
+                        .frame(width: 10, height: 10)
+                case .off:
+                    EmptyView()
                 }
-                .shadow(color: .black.opacity(day.isGoing ? 0.1 : 0.04), radius: 6, x: 0, y: 2)
-
-            Text(day.coverage.label)
-                .font(.system(size: 9, weight: .semibold))
-                .foregroundStyle(day.coverage.color)
-                .multilineTextAlignment(.center)
-                .frame(height: 24)
-
-            Circle()
-                .fill(day.isGoing ? Color.lcGreen : Color.clear)
-                .frame(width: 6, height: 6)
+            }
         }
-        .frame(width: 72)
+    }
+
+    private var circleBackground: Color {
+        switch day.status {
+        case .completed: return Color.lcGreen
+        case .today:     return Color.lcGreen.opacity(0.08)
+        case .upcoming:  return Color.lcBackground
+        case .off:       return Color.lcBackground
+        }
     }
 }

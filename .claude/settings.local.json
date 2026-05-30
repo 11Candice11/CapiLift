@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs cat)",
+      "Bash(xcodebuild -project \"/Users/CandiceYeatman/Library/Mobile Documents/com~apple~CloudDocs/PrivateGit/CapiLift/CapiLift/CapiLift.xcodeproj\" -scheme CapiLift -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16' build)",
+      "Bash(DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -project \"/Users/CandiceYeatman/Library/Mobile Documents/com~apple~CloudDocs/PrivateGit/CapiLift/CapiLift/CapiLift.xcodeproj\" -scheme CapiLift -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16' build)",
+      "Bash(ls /Applications/ | grep -i xcode)",
+      "Read(//Applications/**)",
+      "Bash(mdfind \"kMDItemCFBundleIdentifier == 'com.apple.dt.Xcode'\")",
+      "Bash(xcodebuild -project CapiLift/CapiLift.xcodeproj -scheme CapiLift -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16' build)",
+      "Bash(ls /Applications/Xcode* 2>/dev/null || ls ~/Applications/Xcode* 2>/dev/null || find /Applications -maxdepth 2 -name \"xcodebuild\" 2>/dev/null | head -5)",
+      "Read(//Users/CandiceYeatman/Applications/**)"
+    ]
+  }
+}

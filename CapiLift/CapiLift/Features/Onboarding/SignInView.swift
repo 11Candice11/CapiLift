@@ -3,102 +3,192 @@ import SwiftUI
 struct SignInView: View {
     @Environment(AuthState.self) private var authState
     @State private var isLoading = false
-    
+
     var body: some View {
         ZStack {
-            // Background
-            Color.lcBackground
-                .ignoresSafeArea()
-            
-            // Soft abstract circles for visual warmth
-            GeometryReader { geo in
-                Circle()
-                    .fill(Color.lcGreen.opacity(0.08))
-                    .frame(width: geo.size.width * 1.2)
-                    .offset(x: -geo.size.width * 0.2, y: -geo.size.height * 0.1)
-                
-                Circle()
-                    .fill(Color.lcCoral.opacity(0.07))
-                    .frame(width: geo.size.width * 0.8)
-                    .offset(x: geo.size.width * 0.4, y: geo.size.height * 0.55)
-            }
-            .ignoresSafeArea()
-            
-            // Content
-            VStack(spacing: 0) {
-                Spacer()
-                
-                // Logo area
-                VStack(spacing: LCSpacing.md) {
-                    ZStack {
-                        Circle()
-                            .fill(Color.lcGreen)
-                            .frame(width: 80, height: 80)
-                        Image(systemName: "car.2.fill")
-                            .font(.system(size: 32, weight: .semibold))
-                            .foregroundStyle(.white)
-                    }
-                    
-                    VStack(spacing: LCSpacing.xs) {
-                        Text("CapiLift")
-                            .font(.lcLargeTitle)
+            Color(hex: "F0F2F8").ignoresSafeArea()
+
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 0) {
+
+                    // ── Logo ─────────────────────────────────────────
+                    VStack(spacing: LCSpacing.sm) {
+                        ZStack {
+                            Circle()
+                                .fill(Color.lcGreen)
+                                .frame(width: 72, height: 72)
+                            Image(systemName: "car.2.fill")
+                                .font(.system(size: 28, weight: .semibold))
+                                .foregroundStyle(.white)
+                        }
+
+                        Text("LiftClub")
+                            .font(.lcTitle)
                             .foregroundStyle(Color.lcText)
-                        
-                        Text("Ride together. Go further.")
+
+                        Text("Carpooling made simple")
                             .font(.lcCallout)
                             .foregroundStyle(Color.lcMuted)
                     }
-                }
-                
-                Spacer()
-                
-                // Sign in card
-                VStack(spacing: LCSpacing.lg) {
-                    VStack(spacing: LCSpacing.xs) {
-                        Text("Welcome")
-                            .font(.lcTitle2)
-                            .foregroundStyle(Color.lcText)
-                        
-                        Text("Sign in with your company account\nto connect with colleagues.")
-                            .font(.lcCallout)
-                            .foregroundStyle(Color.lcMuted)
-                            .multilineTextAlignment(.center)
-                            .lineSpacing(4)
+                    .padding(.top, LCSpacing.xxl)
+                    .padding(.bottom, LCSpacing.lg)
+
+                    // ── Hero image card ───────────────────────────────
+                    ZStack(alignment: .bottom) {
+                        // Photo — drop signin_hero.jpg into Assets.xcassets/signin_hero.imageset/
+                        if let _ = UIImage(named: "signin_hero") {
+                            Image("signin_hero")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 320)
+                                .clipped()
+                        } else {
+                            // Placeholder until image is added
+                            LinearGradient(
+                                colors: [Color(hex: "1A2E3B"), Color(hex: "2C4A5E"), Color(hex: "3A6E8A")],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 320)
+                            .overlay {
+                                VStack(spacing: LCSpacing.sm) {
+                                    Image(systemName: "road.lanes.curved.right")
+                                        .font(.system(size: 48))
+                                        .foregroundStyle(.white.opacity(0.4))
+                                    Text("Add signin_hero.jpg to\nAssets.xcassets/signin_hero.imageset/")
+                                        .font(.lcCaption)
+                                        .foregroundStyle(.white.opacity(0.5))
+                                        .multilineTextAlignment(.center)
+                                }
+                            }
+                        }
+
+                        // Gradient scrim at bottom for pill readability
+                        LinearGradient(
+                            colors: [.black.opacity(0.55), .clear],
+                            startPoint: .bottom,
+                            endPoint: .center
+                        )
+                        .frame(height: 120)
+
+                        // Stats pills
+                        HStack(spacing: 0) {
+                            Label("5.2k Tons saved", systemImage: "leaf.fill")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(Color.lcText)
+                                .padding(.horizontal, LCSpacing.md)
+                                .padding(.vertical, LCSpacing.xs)
+                                .background(.white)
+                                .clipShape(Capsule())
+
+                            Circle()
+                                .fill(Color.lcAccent)
+                                .frame(width: 12, height: 12)
+                                .offset(x: -6)
+
+                            Label("Live Network", systemImage: "person.2.fill")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(Color.lcText)
+                                .padding(.horizontal, LCSpacing.md)
+                                .padding(.vertical, LCSpacing.xs)
+                                .background(.white)
+                                .clipShape(Capsule())
+                                .offset(x: -6)
+                        }
+                        .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 2)
+                        .padding(.bottom, LCSpacing.md)
                     }
-                    
-                    // Microsoft SSO button
+                    .clipShape(RoundedRectangle(cornerRadius: LCRadius.xl))
+                    .shadow(color: .black.opacity(0.18), radius: 20, x: 0, y: 8)
+                    .padding(.horizontal, LCSpacing.md)
+                    .padding(.bottom, LCSpacing.xl)
+
+                    // ── Microsoft button ──────────────────────────────
                     Button {
                         handleSignIn()
                     } label: {
                         HStack(spacing: LCSpacing.sm) {
-                            Image(systemName: "person.badge.key.fill")
-                                .font(.system(size: 16, weight: .semibold))
+                            RoundedRectangle(cornerRadius: 3)
+                                .fill(.white)
+                                .frame(width: 22, height: 22)
+                                .overlay {
+                                    Image(systemName: "squareshape.split.2x2")
+                                        .font(.system(size: 13, weight: .bold))
+                                        .foregroundStyle(Color.lcGreen)
+                                }
                             Text("Sign in with Microsoft")
-                                .font(.lcBodyBold)
+                                .font(.system(size: 16, weight: .bold))
                         }
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, LCSpacing.md)
                         .background(Color.lcGreen)
-                        .clipShape(RoundedRectangle(cornerRadius: LCRadius.md))
+                        .clipShape(RoundedRectangle(cornerRadius: LCRadius.pill))
                     }
-                    
-                    Text("Only employees can join CapiLift.")
-                        .font(.lcCaption)
-                        .foregroundStyle(Color.lcMuted)
+                    .padding(.horizontal, LCSpacing.md)
+
+                    // ── Divider ───────────────────────────────────────
+                    HStack(spacing: LCSpacing.sm) {
+                        Rectangle()
+                            .fill(Color.lcBorder)
+                            .frame(height: 1)
+                        Text("OR")
+                            .font(.lcCaptionBold)
+                            .foregroundStyle(Color.lcMuted)
+                        Rectangle()
+                            .fill(Color.lcBorder)
+                            .frame(height: 1)
+                    }
+                    .padding(.horizontal, LCSpacing.md)
+                    .padding(.vertical, LCSpacing.lg)
+
+                    // ── Corporate email button ────────────────────────
+                    Button {
+                        handleSignIn()
+                    } label: {
+                        HStack(spacing: LCSpacing.sm) {
+                            Image(systemName: "envelope")
+                                .font(.system(size: 16, weight: .medium))
+                            Text("Continue with Corporate Email")
+                                .font(.system(size: 16, weight: .semibold))
+                        }
+                        .foregroundStyle(Color.lcText)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, LCSpacing.md)
+                        .background(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: LCRadius.pill))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: LCRadius.pill)
+                                .stroke(Color.lcBorder, lineWidth: 1.5)
+                        }
+                    }
+                    .padding(.horizontal, LCSpacing.md)
+
+                    // ── Legal ─────────────────────────────────────────
+                    Group {
+                        Text("By signing in, you agree to our ")
+                            .foregroundStyle(Color.lcMuted)
+                        + Text("Terms of Service")
+                            .foregroundStyle(Color.lcGreen)
+                        + Text(" and\n")
+                            .foregroundStyle(Color.lcMuted)
+                        + Text("Privacy Policy")
+                            .foregroundStyle(Color.lcGreen)
+                        + Text(".")
+                            .foregroundStyle(Color.lcMuted)
+                    }
+                    .font(.lcCaption)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, LCSpacing.lg)
+                    .padding(.top, LCSpacing.lg)
+                    .padding(.bottom, LCSpacing.xxl)
                 }
-                .padding(LCSpacing.lg)
-                .background(Color.lcCard)
-                .clipShape(RoundedRectangle(cornerRadius: LCRadius.xl))
-                .shadow(color: .black.opacity(0.06), radius: 16, x: 0, y: 4)
-                .padding(.horizontal, LCSpacing.md)
-                
-                Spacer()
-                    .frame(height: LCSpacing.xl)
             }
         }
     }
-    
+
     private func handleSignIn() {
         isLoading = true
         Task {

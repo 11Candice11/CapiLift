@@ -8,13 +8,18 @@
 import SwiftUI
 
 extension Color {
-    static let lcGreen      = Color(hex: "1E7A5C")
-    static let lcCoral      = Color(hex: "F26A4B")
-    static let lcBackground = Color(hex: "F7F6F2")
+    // Brand — LiftClub design system palette
+    static let lcGreen      = Color(hex: "2E5BFF")   // Primary — bright blue
+    static let lcSecondary  = Color(hex: "F43F5E")   // Secondary — red/pink (CTA)
+    static let lcAccent     = Color(hex: "C34100")   // Tertiary — burnt orange
+    static let lcCoral      = Color(hex: "C34100")   // Error / destructive
+
+    // Surface
+    static let lcBackground = Color(hex: "F1F5F9")   // Clean light neutral
     static let lcCard       = Color.white
-    static let lcText       = Color(hex: "1C1C1E")
-    static let lcMuted      = Color(hex: "8E8E93")
-    static let lcBorder     = Color(hex: "E5E5EA")
+    static let lcText       = Color(hex: "1E293B")   // Neutral dark navy
+    static let lcMuted      = Color(hex: "64748B")   // Slate grey
+    static let lcBorder     = Color(hex: "E2E8F0")   // Light border
 }
 
 extension Color {
